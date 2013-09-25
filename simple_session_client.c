@@ -196,7 +196,7 @@ main (int argc, char *argv[])
 
 	while (!simple_quit)
 #ifdef WIN32
-                Sleep(1*1000);
+		Sleep(1*1000);
 #else
 		sleep(1);
 #endif
