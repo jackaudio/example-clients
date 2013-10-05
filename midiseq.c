@@ -19,6 +19,7 @@
 #include <jack/jack.h>
 #include <jack/midiport.h>
 #include <stdio.h>
+#include <signal.h>
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -32,7 +33,14 @@ jack_nframes_t num_notes;
 jack_nframes_t loop_nsamp;
 jack_nframes_t loop_index;
 
-void usage()
+static void signal_handler(int sig)
+{
+	jack_client_close(client);
+	fprintf(stderr, "signal received, exiting ...\n");
+	exit(0);
+}
+
+static void usage()
 {
 	fprintf(stderr, "usage: jack_midiseq name nsamp [startindex note nsamp] ...... [startindex note nsamp]\n");
 	fprintf(stderr, "eg: jack_midiseq Sequencer 24000 0 60 8000 12000 63 8000\n");
@@ -40,7 +48,7 @@ void usage()
 	fprintf(stderr, "that lasts for 12000 samples, then a d4# that starts at 1/4 sec that lasts for 800 samples\n");
 }
 
-int process(jack_nframes_t nframes, void *arg)
+static int process(jack_nframes_t nframes, void *arg)
 {
 	int i,j;
 	void* port_buf = jack_port_get_buffer(output_port, nframes);
@@ -85,7 +93,7 @@ int main(int narg, char **args)
 	}
 	if((client = jack_client_open (args[1], JackNullOption, NULL)) == 0)
 	{
-		fprintf (stderr, "jack server not running?\n");
+		fprintf (stderr, "JACK server not running?\n");
 		return 1;
 	}
 	jack_set_process_callback (client, process, 0);
@@ -110,9 +118,21 @@ int main(int narg, char **args)
 		return 1;
 	}
 
-	while (1)
-	{
-		sleep(1);
-	};
-	
+	/* install a signal handler to properly quits jack client */
+#ifndef WIN32
+	signal(SIGQUIT, signal_handler);
+	signal(SIGHUP, signal_handler);
+#endif
+	signal(SIGTERM, signal_handler);
+	signal(SIGINT, signal_handler);
+
+	/* run until interrupted */
+#ifdef WIN32
+	Sleep(-1);
+#else
+	sleep(-1);
+#endif
+
+	jack_client_close(client);
+	exit (0);
 }
