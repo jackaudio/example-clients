@@ -1,4 +1,4 @@
-/** @file simple_client.c
+/** @file latent_client.c
  *
  * @brief This simple client demonstrates the most basic features of JACK
  * as they would be used by many applications.
@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <inttypes.h>
 
 #include <jack/jack.h>
 
@@ -70,6 +71,7 @@ latency_cb (jack_latency_callback_mode_t mode, void *arg)
 void
 jack_shutdown (void *arg)
 {
+	fprintf(stderr, "JACK shut down, exiting ...\n");
 	exit (1);
 }
 
@@ -196,7 +198,11 @@ main (int argc, char *argv[])
 
 	/* keep running until stopped by the user */
 
+#ifdef WIN32
+	Sleep (-1);
+#else
 	sleep (-1);
+#endif
 
 	/* this is never reached but if the program
 	   had some other way to exit besides being killed,
@@ -206,3 +212,4 @@ main (int argc, char *argv[])
 	jack_client_close (client);
 	exit (0);
 }
+
