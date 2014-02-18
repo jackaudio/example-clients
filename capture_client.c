@@ -112,7 +112,7 @@ disk_thread (void *arg)
 int
 process (jack_nframes_t nframes, void *arg)
 {
-	int chn;
+	unsigned chn;
 	size_t i;
 	jack_thread_info_t *info = (jack_thread_info_t *) arg;
 
