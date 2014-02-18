@@ -150,6 +150,7 @@ process (jack_nframes_t nframes, void *arg)
 void
 jack_shutdown (void *arg)
 {
+    (void) arg;
 	fprintf (stderr, "JACK shutdown\n");
 	// exit (0);
 	abort();
