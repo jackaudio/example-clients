@@ -70,7 +70,6 @@ disk_thread (void *arg)
 	size_t bytes_per_frame = samples_per_frame * sample_size;
 	void *framebuf = malloc (bytes_per_frame);
 
-	pthread_setcanceltype (PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 	pthread_mutex_lock (&disk_thread_lock);
 
 	info->status = 0;
@@ -113,7 +112,7 @@ disk_thread (void *arg)
 int
 process (jack_nframes_t nframes, void *arg)
 {
-	int chn;
+	unsigned chn;
 	size_t i;
 	jack_thread_info_t *info = (jack_thread_info_t *) arg;
 
@@ -151,6 +150,7 @@ process (jack_nframes_t nframes, void *arg)
 void
 jack_shutdown (void *arg)
 {
+    (void) arg;
 	fprintf (stderr, "JACK shutdown\n");
 	// exit (0);
 	abort();
