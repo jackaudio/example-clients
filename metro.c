@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2002 Anthony Van Groningen
-    
+
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -60,19 +60,19 @@ usage ()
 }
 
 void
-process_silence (jack_nframes_t nframes) 
+process_silence (jack_nframes_t nframes)
 {
 	sample_t *buffer = (sample_t *) jack_port_get_buffer (output_port, nframes);
 	memset (buffer, 0, sizeof (jack_default_audio_sample_t) * nframes);
 }
 
 void
-process_audio (jack_nframes_t nframes) 
+process_audio (jack_nframes_t nframes)
 {
 
 	sample_t *buffer = (sample_t *) jack_port_get_buffer (output_port, nframes);
 	jack_nframes_t frames_left = nframes;
-		
+
 	while (wave_length - offset < frames_left) {
 		memcpy (buffer + (nframes - frames_left), wave + offset, sizeof (sample_t) * (wave_length - offset));
 		frames_left -= wave_length - offset;
@@ -111,7 +111,7 @@ sample_rate_change () {
 int
 main (int argc, char *argv[])
 {
-	
+
 	sample_t scale;
 	int i, attack_length, decay_length;
 	double *amp;
@@ -122,7 +122,6 @@ main (int argc, char *argv[])
 	int attack_percent = 1, decay_percent = 10, dur_arg = 100;
 	char *client_name = 0;
 	char *bpm_string = "bpm";
-	int verbose = 0;
 	jack_status_t status;
 
 	const char *options = "f:A:D:a:d:b:n:thv";
@@ -140,7 +139,7 @@ main (int argc, char *argv[])
 		{"verbose", 0, 0, 'v'},
 		{0, 0, 0, 0}
 	};
-	
+
 	while ((opt = getopt_long (argc, argv, options, long_options, &option_index)) != EOF) {
 		switch (opt) {
 		case 'f':
@@ -186,13 +185,12 @@ main (int argc, char *argv[])
 			strcpy (client_name, optarg);
 			break;
 		case 'v':
-			verbose = 1;
 			break;
 		case 't':
 			transport_aware = 1;
 			break;
 		default:
-			fprintf (stderr, "unknown option %c\n", opt); 
+			fprintf (stderr, "unknown option %c\n", opt);
 		case 'h':
 			usage ();
 			return -1;
@@ -264,5 +262,5 @@ main (int argc, char *argv[])
 	while (1) {
 		sleep(1);
 	};
-	
+
 }
